@@ -1,0 +1,145 @@
+import styled from "styled-components";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+
+const Wrapper = styled(motion.div)`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const Container = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 50vw;
+  gap: 15px;
+`;
+
+const Overlay = styled(motion.div)`
+  // overlay 는 animate될것이기 때문에 그냥 div이면 안돼 따라서 (motion.div)를 해줘야해
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Box = styled(motion.div)`
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+`;
+
+const Circle = styled(motion.div)`
+  background-color: white;
+  height: 40px;
+  width: 40px;
+  border-radius: 50px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+`;
+
+const Btn = styled(motion.button)`
+  margin: 40px;
+  onClick : {
+    toggle,
+    scale:1.1
+  }
+`;
+
+const btnVars = {
+  hover: { scale: 1.3, x: -15, y: 20, color: "orange" },
+};
+
+const boxVars = {
+  initial: (i) => ({
+    scale: 1,
+    x: 0,
+    y: 0,
+  }),
+  hover: (i) => ({
+    scale: 1.1,
+    y: i ? -15 : 15,
+    x: i ? -20 : 20,
+  }),
+};
+const overlayVars = {
+  start: { backgroundColor: "rgba(0, 0, 0, 0)" },
+  end: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+  exit: { backgroundColor: "rgba(0, 0, 0, 0)" },
+};
+
+function App() {
+  const [id, setId] = (useState < null) | (string > null);
+  const [clicked, setClicked] = useState(false);
+  const toggle = () => {
+    setClicked((prev) => !prev);
+  };
+
+  return (
+    <Wrapper>
+      <Container>
+        <Grid>
+          <Box
+            variants={boxVars}
+            whileHover="hover"
+            initial="initial"
+            custom={1}
+            onClick={() => setId("1")}
+            layoutId="1"
+          ></Box>
+          <Box>{clicked ? <Circle layoutId="circle" /> : null}</Box>
+          <Box>{!clicked ? <Circle layoutId="circle" /> : null}</Box>
+          <Box
+            variants={boxVars}
+            whileHover="hover"
+            style={{ transformOrigin: "top left" }}
+            onClick={() => setId("4")}
+            key={"4"}
+            layoutId={"4"}
+          ></Box>
+        </Grid>
+        <Btn onClick={toggle} variants={btnVars} whileHover="hover">
+          switch
+        </Btn>
+      </Container>
+      <AnimatePresence>
+        {id ? (
+          <Overlay
+            onClick={() => setId(null)}
+            variants={overlayVars}
+            initial="start"
+            animate="end"
+            exit="exit"
+          >
+            <Box
+              layoutId={id}
+              style={{
+                width: 400,
+                height: 200,
+                backgroundColor: "rgba(255, 255, 255, 1)",
+              }}
+            ></Box>
+          </Overlay>
+        ) : null}
+      </AnimatePresence>
+    </Wrapper>
+  );
+}
+export default App;

@@ -1,0 +1,125 @@
+import styled from "styled-components";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useTransform,
+  useViewportScroll,
+} from "framer-motion";
+import { useState } from "react";
+import { useEffect, useRef } from "react";
+
+const Wrapper = styled(motion.div)`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+/* const BiggerBox = styled.div`
+  width: 600px;
+  height: 600px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+`; */
+
+const Box = styled(motion.div)`
+  width: 400px;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  top: 100px;
+  position: absolute;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+`;
+
+/* const boxVariants = {
+  hover: { rotateZ: 90 },
+  click: { borderRadius: "100px" },
+}; */
+
+const box = {
+  entry: (isBack: boolean) => ({
+    x: isBack ? -500 : 500,
+    opacity: 0,
+    scale: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+  },
+  exit: (isBack: boolean) => ({ x: isBack ? 500 : -500, opacity: 0, scale: 0 }),
+};
+
+function App() {
+  const [visible, setVisible] = useState(1);
+  const [back, setBack] = useState(false);
+  const nextPlease = () => {
+    setBack(false);
+    setVisible((prev) => (prev === 10 ? 10 : prev + 1));
+  };
+  const prevPlease = () => {
+    setBack(true);
+    setVisible((prev) => (prev === 1 ? 1 : prev - 1));
+  };
+  //exitBeforeEnter은 하나의 애니메이션이 끝난후 다음 애니메이션이 동작하도록 하는 것이다.
+  return (
+    <Wrapper>
+      <AnimatePresence exitBeforeEnter custom={back}>
+        <Box
+          custom={back}
+          variants={box}
+          initial="entry"
+          animate="center"
+          exit="exit"
+          key={visible}
+        >
+          {visible}
+        </Box>
+      </AnimatePresence>
+      <button onClick={nextPlease}>next</button>
+      <button onClick={prevPlease}>prev</button>
+    </Wrapper>
+  );
+  /*   const x = useMotionValue(0);
+        const rotateZ = useTransform(x, [-800, 800], [-360, 360]);
+        const gradient = useTransform(
+          x,
+          [-800, 800],
+          [
+            "linear-gradient(135deg, rgb(180, 29, 172),#b1149c))",
+            "linear-gradient(135deg, rgb(0, 238, 155), rgb(238, 178, 0))",
+          ]
+        );
+        const { scrollYProgress } = useViewportScroll();
+        const scale = useTransform(scrollYProgress, [0, 1], [1, 5]);
+      
+        const Svg = styled.svg`
+          width: 300px;
+          height: 300px;
+          path {
+            stroke: white;
+            stroke-width: 2;
+          }
+        `;
+      
+        const svg = {
+          start: { pathLength: 0, fill: "rgba(255,255,255,0)" },
+          end: {
+            fill: "rgba(255,255,255,1)",
+            pathLength: 1,
+          },
+        }; */
+}
+export default App;
